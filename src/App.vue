@@ -9,7 +9,10 @@
     <ul v-else class="game-list">
       <template v-for="game in games" :key="game.id" >
         <li class="game-item" @click="game.isSpoiled = !game.isSpoiled">
-          <span>{{ game.home_team.abbreviation }}</span> vs <span>{{ game.visitor_team.abbreviation }}</span><br>
+          <div class="game-data">
+            <div class="team-logo" :style="getTeamLogoPosition(game.home_team.abbreviation)"></div>{{ game.home_team.abbreviation }} vs {{ game.visitor_team.abbreviation }}
+            <div class="team-logo" :style="getTeamLogoPosition(game.visitor_team.abbreviation)"></div>
+          </div>
           <small>{{ game.status }}</small>
           <strong v-if="game.isSpoiled"><br>{{ game.home_team_score }}:{{ game.visitor_team_score }}</strong><br>
         </li> 
@@ -25,13 +28,14 @@ export default {
   data() {
     return {
       games: [],
-      searchDate: '2024-01-27', // Example date in YYYY-MM-DD format
+      searchDate: '',
       isFetchingData: false
     }
   },
   async mounted() {
     console.clear()
     this.searchDate = await this.getCurrentDate ()
+    // this.searchDate = '2022-11-7'
     this.fetchGames();
   },
   methods: {
@@ -71,6 +75,67 @@ export default {
       currentDate.add(days, 'days');
       this.searchDate = currentDate.format('YYYY-MM-DD');
     },
+
+    getTeamLogoPosition(abbreviation) {
+      
+      const mapData = [
+        { team: 'GSW', position: { x: 0, y: 0 }},
+        { team: 'DEN', position: { x: 1, y: 0 }},
+        { team: 'DAL', position: { x: 2, y: 0 }},
+        { team: 'CHI', position: { x: 3, y: 0 }},
+        { team: 'ATL', position: { x: 4, y: 0 }},
+        { team: 'BOS', position: { x: 5, y: 0 }},
+
+        { team: 'LAC', position: { x: 0, y: 1 }},
+        { team: 'MIN', position: { x: 1, y: 1 }},
+        { team: 'HOU', position: { x: 2, y: 1 }},
+        { team: 'CLE', position: { x: 3, y: 1 }},
+        { team: 'CHA', position: { x: 4, y: 1 }},
+        { team: 'BKN', position: { x: 5, y: 1 }},
+
+        { team: 'LAL', position: { x: 0, y: 2 }},
+        { team: 'OKC', position: { x: 1, y: 2 }},
+        { team: 'MEM', position: { x: 2, y: 2 }},
+        { team: 'DET', position: { x: 3, y: 2 }},
+        { team: 'MIA', position: { x: 4, y: 2 }},
+        { team: 'NYK', position: { x: 5, y: 2 }},
+
+        { team: 'PHX', position: { x: 0, y: 3 }},
+        { team: 'POR', position: { x: 1, y: 3 }},
+        { team: 'NOP', position: { x: 2, y: 3 }},
+        { team: 'IND', position: { x: 3, y: 3 }},
+        { team: 'ORL', position: { x: 4, y: 3 }},
+        { team: 'PHI', position: { x: 5, y: 3 }},
+
+        { team: 'SAC', position: { x: 0, y: 4 }},
+        { team: 'UTA', position: { x: 1, y: 4 }},
+        { team: 'SAS', position: { x: 2, y: 4 }},
+        { team: 'MIL', position: { x: 3, y: 4 }},
+        { team: 'WAS', position: { x: 4, y: 4 }},
+        { team: 'TOR', position: { x: 5, y: 4 }},
+      ];
+
+      let tempXcode, tempYcode;
+      const team = mapData.find(teamData => {
+        if (teamData.team === abbreviation) {
+          tempXcode = teamData.position.x;
+          tempYcode = teamData.position.y;
+          return true; 
+        }
+        return false; 
+      });
+      const margin = -54
+      const calCultedXcode = (margin * tempXcode) -2
+      const calCultedYcode = (margin * tempYcode) -2
+
+      if (team) {
+        return `background-position: ${calCultedXcode}px ${calCultedYcode}px`; 
+      } else {
+        return 'background-position: 49px 40px';
+      }
+    }
+
+
   }
 }
 </script>
@@ -103,5 +168,27 @@ export default {
 
   .game-item span {
     font-weight: bold;
+  }
+
+  .game-data{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0px 0px 10px;
+  }
+
+  .team-logo{
+    width: 50px;
+    height: 50px;
+    /* height: 100px; */
+    border-radius: 50%;
+    background-size: 324px 270.5px; /* This scales down the image */
+    /* background-position: -2px -2px; */
+    background-image: url('./assets/team-logo.png');
+    background-repeat: no-repeat; 
+    
+    margin: auto 15px;
+
   }
 </style>
