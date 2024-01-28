@@ -64,10 +64,10 @@ export default {
       const now = moment().tz('Asia/Tokyo');
       now.subtract(1, 'days');
       // if (now.hour() > 6)
-      if (now.hour() > 6) {
-        console.log('here')
-        now.subtract(2, 'days');
-      }
+      // if (now.hour() > 6) {
+      //   console.log('here')
+      //   now.subtract(2, 'days');
+      // }
       return now.format('YYYY-MM-DD');
     },
 
