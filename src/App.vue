@@ -1,19 +1,20 @@
 <template>
   <div class="game-container">
     <h1>NBA Games on<br> {{ searchDate }}</h1>
-    <div style="display: flex; justify-content: space-between; width: 60%; margin: auto;">
-      <button @click="goToPreviousDate">Previous Day</button>
-      <button @click="goToNextDate">Next Day</button>
+    <div style="display: flex; justify-content: space-between; width: 100%; margin: auto;">
+      <button @click="goToPreviousDate()">Previous Day</button>
+      <button @click="showScore()">Show everything</button>
+      <button @click="goToNextDate()">Next Day</button>
     </div>
     <div v-if="isFetchingData" class="loading">Loading...</div>
     <ul v-else class="game-list">
       <template v-for="game in games" :key="game.id" >
-        <li class="game-item" @click="game.isSpoiled = !game.isSpoiled">
+       <li class="game-item" @click="game.isSpoiled = !game.isSpoiled" data-aos="fade-up">
           <div class="game-data">
             <div class="team-logo" :style="getTeamLogoPosition(game.home_team.abbreviation)"></div>{{ game.home_team.abbreviation }} vs {{ game.visitor_team.abbreviation }}
             <div class="team-logo" :style="getTeamLogoPosition(game.visitor_team.abbreviation)"></div>
           </div>
-          <small>{{ game.status }}</small>
+          <small>{{ game.status }} <strong v-if="isGameHot(game)">🔥</strong></small>
           <strong v-if="game.isSpoiled"><br>{{ game.home_team_score }}:{{ game.visitor_team_score }}</strong><br>
         </li> 
       </template>
@@ -23,6 +24,8 @@
 
 <script>
 import moment from 'moment-timezone';
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default {
   data() {
@@ -34,6 +37,8 @@ export default {
   },
   async mounted() {
     console.clear()
+    AOS.init();
+
     this.searchDate = await this.getCurrentDate ()
     // this.searchDate = '2022-11-7'
     this.fetchGames();
@@ -54,6 +59,7 @@ export default {
         this.isFetchingData = false;
       }
     },
+
     getCurrentDate() {
       const now = moment().tz('Asia/Tokyo');
       if (now.hour() > 6) {
@@ -133,7 +139,21 @@ export default {
       } else {
         return 'background-position: 49px 40px';
       }
-    }
+    },
+
+    showScore(){
+      for (let game of this.games) {
+        game.isSpoiled = true;
+      }
+    },
+
+    isGameHot(game){
+      if(!game.time) return false
+      const scoreDifference = Math.abs(game.home_team_score - game.visitor_team_score);
+      console.log(scoreDifference);
+      if(scoreDifference < 10) return true
+      return false
+    },
 
 
   }
