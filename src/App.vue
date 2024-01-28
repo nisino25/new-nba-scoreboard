@@ -62,8 +62,11 @@ export default {
 
     getCurrentDate() {
       const now = moment().tz('Asia/Tokyo');
+      now.subtract(1, 'days');
+      // if (now.hour() > 6)
       if (now.hour() > 6) {
-        now.subtract(1, 'days');
+        console.log('here')
+        now.subtract(2, 'days');
       }
       return now.format('YYYY-MM-DD');
     },
@@ -150,7 +153,6 @@ export default {
     isGameHot(game){
       if(!game.time) return false
       const scoreDifference = Math.abs(game.home_team_score - game.visitor_team_score);
-      console.log(scoreDifference);
       if(scoreDifference < 10) return true
       return false
     },
