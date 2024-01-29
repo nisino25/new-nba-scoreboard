@@ -271,13 +271,14 @@ export default {
   html,body{
     background: #194045;
     font-family: 'Teko', sans-serif;
-    color: forestgreen;
+    /* color: forestgreen; */
+    color: white;
   }
   .game-container {
     text-align: center;
     max-width: 600px;
     margin: auto;
-    padding: 20px;
+    padding: 5px;
   }
 
   .loading {
