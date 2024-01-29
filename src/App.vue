@@ -369,7 +369,7 @@ export default {
   .game-item .list-bottom{
     /* margin-top: 15px; */
     display: grid;
-    grid-template-columns: 15% 60% 15%;
+    grid-template-columns: 12.5% 70% 12.5%;
     justify-content: space-between;
     align-items: center;
 
@@ -379,7 +379,7 @@ export default {
     /* width: 85%; */
     margin: 15px auto 0px;
 
-    font-size: 1.5em;
+    font-size: 1.25em;
   }
 
   .game-item .list-bottom span{
@@ -389,7 +389,7 @@ export default {
   }
 
   .game-item .list-bottom .game-status{
-    font-size: 1.2em;
+    font-size: 1.1em;
     text-align: center;
   }
 </style>
