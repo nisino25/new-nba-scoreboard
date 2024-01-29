@@ -274,6 +274,10 @@ export default {
     /* color: forestgreen; */
     color: white;
   }
+
+  h1{
+    margin-bottom: 5px;
+  }
   .game-container {
     text-align: center;
     max-width: 600px;
