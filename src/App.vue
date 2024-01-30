@@ -1,11 +1,58 @@
 <template>
   <div class="game-container">
-    <h1>NBA Games on<br> {{ searchDate }}</h1>
-    <div style="display: grid; justify-content: space-around; width: 80%; margin: auto;grid-template-columns: 45% 45%;">
-      <button @click="goToPreviousDate()"  style="margin-bottom: 10px;">Previous Day</button>
-      <button @click="goToNextDate()" style="margin-bottom: 10px;">Next Day</button>
-      <input type="date" v-model="searchDate">
-      <button @click="showScore()">Show Scores</button>
+    <h1>NBA Games on <br>{{ searchDate }}</h1>
+    <div v-if="dateRange" class="dataRange">
+      <template v-for="date in dateRange" :key="date">
+        <span @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
+      </template>
+      <span style="margin-right: 0; position: relative;"> 
+        <i class="fas fa-calendar" @click="openDatePicker"></i>
+        <input 
+      type="date" 
+      ref="dateInput" 
+      v-model="searchDate" 
+      class="visually-hidden"
+    />
+      </span>
+      
+    </div>
+    <div class="score-switch" @click="showScore()" >
+      <div class="switch-container">
+        <img src="./assets/basketball.png" alt="" :class="{ toRight: isShowingScore, toLeft: !isShowingScore }">
+        <div class="text-container">
+          <p>OFF</p>
+          <p>ON</p>
+        </div>
+        <div class="lines">
+          <div class="half-court"></div>
+          <div class="center-circle"></div>
+
+          <div class="left-side">
+            <div class="three-point-cover"></div>
+            <div class="three-point-line"></div>
+            <div class="free-throw-top"></div>
+            <div class="free-throw-bottom"></div>
+            <div class="free-throw-line"></div>
+          </div>
+
+          <div class="left-side">
+            <div class="left-three-point-cover"></div>
+            <div class="left-three-point-line"></div>
+            <div class="left-free-throw-top"></div>
+            <div class="left-free-throw-bottom"></div>
+            <div class="left-free-throw-line"></div>
+          </div>
+
+          <div class="right-side">
+            <div class="right-three-point-cover"></div>
+            <div class="right-three-point-line"></div>
+            <div class="right-free-throw-top"></div>
+            <div class="right-free-throw-bottom"></div>
+            <div class="right-free-throw-line"></div>
+          </div>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -20px; left: 75px; transform: translateX(-50%);">Showing Score</div>
     </div>
     <div v-if="isFetchingData" class="loading">Loading...</div>
     <ul v-else class="game-list">
@@ -52,7 +99,9 @@ export default {
     return {
       games: [],
       searchDate: '',
-      isFetchingData: false
+      isFetchingData: false,
+
+      isShowingScore: false,
     }
   },
   async mounted() {
@@ -62,7 +111,6 @@ export default {
     this.searchDate = await this.getCurrentDate ()
     // this.searchDate = '2022-11-7'
     this.fetchGames();
-    
   },
   methods: {
     async fetchGames() {
@@ -73,7 +121,6 @@ export default {
         const res = await fetch(URL);
         const json = await res.json();
         this.games = json.data;
-        console.log(this.games);
         this.sortGames();
         console.log(this.games);
       } catch (error) {
@@ -93,6 +140,8 @@ export default {
       // }
       return now.format('YYYY-MM-DD');
     },
+
+    
 
     goToPreviousDate() {
       this.adjustDate(-1);
@@ -168,8 +217,16 @@ export default {
     },
 
     showScore(){
-      for (let game of this.games) {
-        game.isSpoiled = true;
+      if(!this.isShowingScore){
+        this.isShowingScore = !this.isShowingScore
+        for (let game of this.games) {
+          game.isSpoiled = true;
+        }
+      }else{
+        this.isShowingScore = !this.isShowingScore
+        for (let game of this.games) {
+          game.isSpoiled = false;
+        }
       }
     },
 
@@ -253,8 +310,44 @@ export default {
       }
     },
 
+    shortenDate(date){
+      date = date.slice(5)
+
+      let newArray = date.split(''); // Convert the string to an array of characters
+      newArray[2] = '/'; // Replace the 3rd letter with "/"
+      date = newArray.join('')
+      return date
+    },
+
+    openDatePicker() {
+      console.log('hey')
+      console.log(this.$refs.dateInput)
+      this.$refs.dateInput.click();
+    },
+
+
 
   },
+
+  computed: {
+    dateRange() {
+      const now = moment(this.searchDate).tz('Asia/Tokyo');
+      let dates = [];
+
+      for (let i = 2; i > 0; i--) {
+        dates.push(now.clone().subtract(i, 'days').format('YYYY-MM-DD'));
+      }
+
+      dates.push(now.format('YYYY-MM-DD'));
+
+      for (let i = 1; i <= 2; i++) {
+        dates.push(now.clone().add(i, 'days').format('YYYY-MM-DD'));
+      }
+
+      return dates;
+    },
+  },
+
   watch: {
     // Watch for changes in searchDate
     searchDate(newDate, oldDate) {
@@ -277,7 +370,318 @@ export default {
 
   h1{
     margin-bottom: 5px;
+    text-align: left;
+    margin: 25px auto;
+    line-height: 1;
   }
+
+  .score-switch{
+    position: absolute;
+    top: 8.5px;
+    right: 8.5px;
+    
+    display: block;
+    width: 45%;
+    height: 80px;
+
+    /* border: 2px solid red; */
+  }
+
+  .score-switch .switch-container{
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 150px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 50px;
+
+    background: rgb(180, 172, 102);
+    overflow: hidden;
+  }
+
+  .score-switch .switch-container img{
+    position: absolute;
+    left: 0px;
+    /* left: 100%;
+    transform: translate(-100%); */
+    /* top: 50%; */
+    width: 50px;
+    height: auto;
+    pointer-events: none;
+
+    z-index: 100;
+  }
+
+  .toRight {
+  position: relative;
+  animation: moveShrinkGrow 1.5s ease-in-out forwards;
+}
+
+@keyframes moveShrinkGrow {
+  0% {
+    left: 0;
+    transform: translate(0) scale(1);
+  }
+  50% {
+    left: 50%;
+    transform: translate(-50%) scale(0.70) rotate(180deg);
+    /* box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); */
+  }
+  100% {
+    left: 100%;
+    transform: translate(-100%) scale(1) rotate(360deg);
+  }
+}
+
+.toLeft {
+  position: relative;
+  animation: moveShrinkGrowReverse 1.5s ease-in-out forwards;
+}
+
+@keyframes moveShrinkGrowReverse {
+  0% {
+    left: 100%;
+    transform: translate(-100%) scale(1) rotate(360deg);
+  }
+  50% {
+    left: 50%;
+    transform: translate(-50%) scale(0.7) rotate(90deg);
+  }
+  100% {
+    left: 0;
+    transform: translate(0) scale(1);
+  }
+}
+
+.text-container{
+  position: absolute;
+  width: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+
+  width: 90%;
+  height: 25px;
+  /* border: 2px solid blue; */
+
+  display: grid;
+  grid-template-columns: 15% 15%;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 1.5em;
+  text-align: center;
+  z-index: 5;
+
+}
+
+.text-container p{
+  line-height: 1;
+  margin: 0;
+  writing-mode: vertical-rl;
+  
+  
+}
+
+
+.lines{
+  z-index: 1;
+}
+
+.half-court{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 2.5px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+}
+
+.center-circle{
+  position: absolute;
+  display: block;
+  border: 2.5px solid grey;
+
+  /* width: ; */
+  height: 50%;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+
+}
+
+.left-three-point-cover{
+  position: absolute;
+  display: block;
+
+  left: 0%;
+  height: 100%;
+  aspect-ratio: 1/2;
+  z-index: 2;
+  /* overflow: hidden; */
+
+  background: rgb(180, 172, 102);
+}
+
+.left-three-point-line{
+  position: absolute;
+  display: block;
+  border: 2.5px solid grey;
+
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  height: calc(100% - 4px);
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+
+  
+}
+
+.left-free-throw-top{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 37.5px;
+  height: 2.5px;
+  left: 0;
+  top: calc(50% + 7.5px);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.left-free-throw-bottom{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 37.5px;
+  height: 2.5px;
+  left: 0;
+  top: calc(50% - 7.5px);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.left-free-throw-line{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 2.5px;
+  height: 15px;
+  left: 35px;
+  top: calc(50%);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+
+/* ------------------------------------ */
+
+.right-three-point-cover{
+  position: absolute;
+  display: block;
+
+  right: 0%;
+  height: 100%;
+  aspect-ratio: 1/2;
+  z-index: 2;
+  /* overflow: hidden; */
+
+  background: rgb(180, 172, 102);
+}
+
+.right-three-point-line{
+  position: absolute;
+  display: block;
+  border: 2.5px solid grey;
+
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  height: calc(100% - 4px);
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+
+  
+}
+
+.right-free-throw-top{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 37.5px;
+  height: 2.5px;
+  right: 0;
+  top: calc(50% + 7.5px);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.right-free-throw-bottom{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 37.5px;
+  height: 2.5px;
+  right: 0;
+  top: calc(50% - 7.5px);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.right-free-throw-line{
+  position: absolute;
+  display: block;
+  background: grey;
+
+  width: 2.5px;
+  height: 15px;
+  right: 35px;
+  top: calc(50%);
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+
+
+
+  .dataRange{
+    margin: 15px auto;
+    max-width: 100%;
+  }
+
+  
+  .dataRange span{
+    background: rgb(180, 172, 102);
+    margin-right: 7.5px;
+    font-size: 1.5em;
+    padding: 2px 8px;
+    border-radius: 7.5px;
+    color: #194045;
+  }
+
+  .dataRange .fas{
+    color: #194045;
+    font-size: .85em;
+  }
+
+
   .game-container {
     text-align: center;
     max-width: 600px;
@@ -395,5 +799,22 @@ export default {
   .game-item .list-bottom .game-status{
     font-size: 1.1em;
     text-align: center;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 30px;
+    opacity: 0;
+    /* width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0; */
   }
 </style>
