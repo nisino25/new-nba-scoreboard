@@ -111,7 +111,7 @@ export default {
 
     this.searchDate = await this.getCurrentDate ()
     // this.searchDate = '2022-11-7'
-    this.fetchGames();
+    // this.fetchGames();
   },
   methods: {
     async fetchGames() {
@@ -675,9 +675,9 @@ export default {
   
   .dataRange span{
     background: rgb(180, 172, 102);
-    margin-right: 7.5px;
+    margin-right: 6px;
     font-size: 1.5em;
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 7.5px;
     color: #194045;
   }
