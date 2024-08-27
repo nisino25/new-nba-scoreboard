@@ -117,7 +117,7 @@ export default {
     async fetchGames() {
       this.isFetchingData = true;
       
-      const URL = `https://www.balldontlie.io/api/v1/games?start_date=${this.searchDate}&end_date=${this.searchDate}`;
+      const URL = `https://api.balldontlie.io/v1/games?start_date=${this.searchDate}&end_date=${this.searchDate}`;
       const options = {
           headers: {
             "Authorization": this.apiKey, // Make sure `this.apiKey` is defined in your component
