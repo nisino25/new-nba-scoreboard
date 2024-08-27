@@ -102,6 +102,7 @@ export default {
       isFetchingData: false,
 
       isShowingScore: false,
+      apiKey: "d758b031-1a51-4e92-9598-86a30e5639c6",
     }
   },
   async mounted() {
@@ -117,8 +118,13 @@ export default {
       this.isFetchingData = true;
       
       const URL = `https://www.balldontlie.io/api/v1/games?start_date=${this.searchDate}&end_date=${this.searchDate}`;
+      const options = {
+          headers: {
+            "Authorization": this.apiKey, // Make sure `this.apiKey` is defined in your component
+          },
+      };
       try {
-        const res = await fetch(URL);
+        const res = await fetch(URL, options);
         const json = await res.json();
         this.games = json.data;
         this.sortGames();
