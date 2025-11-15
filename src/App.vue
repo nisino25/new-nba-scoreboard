@@ -238,7 +238,15 @@ export default {
 
     isGameHot(game){
       if(!game.time) return false
-      if(game.home_team.abbreviation === 'SAS' || game.visitor_team.abbreviation === 'SAS') return true
+      const targets = ['SAS', 'LAL']
+
+      if (
+          targets.includes(game.home_team.abbreviation) ||
+          targets.includes(game.visitor_team.abbreviation)
+      ) {
+          return true
+      }
+
       
       const scoreDifference = Math.abs(game.home_team_score - game.visitor_team_score);
       if(scoreDifference <= 7) return true
