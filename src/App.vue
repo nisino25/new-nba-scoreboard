@@ -238,7 +238,8 @@ export default {
 
     isGameHot(game){
       if(!game.time) return false
-      const targets = ['SAS', 'LAL']
+      // const targets = ['SAS', 'LAL']
+      const targets = ['SAS']
 
       if (
           targets.includes(game.home_team.abbreviation) ||
@@ -249,7 +250,7 @@ export default {
 
       
       const scoreDifference = Math.abs(game.home_team_score - game.visitor_team_score);
-      if(scoreDifference <= 7) return true
+      if(scoreDifference <= 5) return true
 
       return false
     },
