@@ -237,7 +237,8 @@
 
   const isGameHot= ((game) => {
     if(!game.time) return false
-    const targets = ['SAS', 'LAL']
+    // const targets = ['SAS', 'LAL']
+      const targets = ['SAS']
 
     if (
       targets.includes(game.home_team.abbreviation) ||
