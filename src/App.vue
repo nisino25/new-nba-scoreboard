@@ -45,8 +45,8 @@
     </div>
     <div v-if="dateRange" class="dataRange">
       <span style=""><i class="fas fa-sync" @click="reloadPage()"></i></span>
-      <template v-for="date in dateRange" :key="date">
-        <span @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
+      <template v-for="(date, index) in dateRange" :key="date">
+        <span v-if="index !== 0" @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
       </template>
       <span style="margin-right: 0; position: relative; overflow: hidden;"> 
         <i class="fas fa-calendar" @click="openDatePicker"></i>
