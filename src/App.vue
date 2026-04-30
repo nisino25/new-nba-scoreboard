@@ -1,7 +1,7 @@
 <template>
   <div class="game-container">
     <div class="header-flex">
-      <h1>NBA Games on <br>{{ searchDate }}</h1>
+      <h1>NBA Games on <br>{{ displayDate() }}</h1>
 
       <div class="score-switch" @click="showScore()" >
         <div class="switch-container">
@@ -333,8 +333,21 @@
     let newArray = date.split(''); // Convert the string to an array of characters
     newArray[2] = '/'; // Replace the 3rd letter with "/"
     date = newArray.join('')
+
+    // add plus one date
+    date = moment(date, 'MM/DD').add(1, 'days').format('MM/DD')
     return date
   })
+
+  const displayDate = (() => {
+    console.log('searchDate.value:', searchDate.value)
+    console.log(typeof searchDate.value)
+    const displayDate = moment(searchDate.value, 'YYYY-MM-DD')
+    .add(1, 'days')
+    .format('MM/DD')
+    return displayDate
+})
+
 
   const openDatePicker = (() => {
     console.log(this.$refs.dateInput)
