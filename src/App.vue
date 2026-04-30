@@ -47,7 +47,7 @@
       <template v-for="date in dateRange" :key="date">
         <span @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
       </template>
-      <span style="position: relative;"> 
+      <span style="position: relative; overflow: hidden;"> 
         <i class="fas fa-calendar" @click="openDatePicker"></i>
         <input 
           type="date" 
@@ -57,7 +57,6 @@
         />
       </span>
       <span style="margin-right: 0;"><i class="fas fa-sync" @click="reloadPage()"></i></span>
-      
     </div>
     <div v-if="isFetchingData" class="loading">Loading...</div>
     <ul v-else class="game-list">
