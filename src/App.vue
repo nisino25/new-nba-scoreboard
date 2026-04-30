@@ -1,58 +1,63 @@
 <template>
   <div class="game-container">
-    <h1>NBA Games on <br>{{ searchDate }}</h1>
+    <div class="header-flex">
+      <h1>NBA Games on <br>{{ searchDate }}</h1>
+
+      <div class="score-switch" @click="showScore()" >
+        <div class="switch-container">
+          <img src="./assets/basketball.png" alt="" :class="{ toRight: isShowingScore, toLeft: !isShowingScore }">
+          <div class="text-container">
+            <p>OFF</p>
+            <p>ON</p>
+          </div>
+          <div class="lines">
+            <div class="half-court"></div>
+            <div class="center-circle"></div>
+
+            <div class="left-side">
+              <div class="three-point-cover"></div>
+              <div class="three-point-line"></div>
+              <div class="free-throw-top"></div>
+              <div class="free-throw-bottom"></div>
+              <div class="free-throw-line"></div>
+            </div>
+
+            <div class="left-side">
+              <div class="left-three-point-cover"></div>
+              <div class="left-three-point-line"></div>
+              <div class="left-free-throw-top"></div>
+              <div class="left-free-throw-bottom"></div>
+              <div class="left-free-throw-line"></div>
+            </div>
+
+            <div class="right-side">
+              <div class="right-three-point-cover"></div>
+              <div class="right-three-point-line"></div>
+              <div class="right-free-throw-top"></div>
+              <div class="right-free-throw-bottom"></div>
+              <div class="right-free-throw-line"></div>
+            </div>
+          </div>
+        </div>
+        <div style="position: absolute; bottom: -20px; left: 75px; transform: translateX(-50%);">Showing Score</div>
+      </div>
+
+    </div>
     <div v-if="dateRange" class="dataRange">
       <template v-for="date in dateRange" :key="date">
         <span @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
       </template>
-      <span style="margin-right: 0; position: relative;"> 
+      <span style="position: relative;"> 
         <i class="fas fa-calendar" @click="openDatePicker"></i>
         <input 
-      type="date" 
-      ref="dateInput" 
-      v-model="searchDate" 
-      class="visually-hidden"
-    />
+          type="date" 
+          ref="dateInput" 
+          v-model="searchDate" 
+          class="visually-hidden"
+        />
       </span>
+      <span style="margin-right: 0;"><i class="fas fa-sync" @click="reloadPage()"></i></span>
       
-    </div>
-    <div class="score-switch" @click="showScore()" >
-      <div class="switch-container">
-        <img src="./assets/basketball.png" alt="" :class="{ toRight: isShowingScore, toLeft: !isShowingScore }">
-        <div class="text-container">
-          <p>OFF</p>
-          <p>ON</p>
-        </div>
-        <div class="lines">
-          <div class="half-court"></div>
-          <div class="center-circle"></div>
-
-          <div class="left-side">
-            <div class="three-point-cover"></div>
-            <div class="three-point-line"></div>
-            <div class="free-throw-top"></div>
-            <div class="free-throw-bottom"></div>
-            <div class="free-throw-line"></div>
-          </div>
-
-          <div class="left-side">
-            <div class="left-three-point-cover"></div>
-            <div class="left-three-point-line"></div>
-            <div class="left-free-throw-top"></div>
-            <div class="left-free-throw-bottom"></div>
-            <div class="left-free-throw-line"></div>
-          </div>
-
-          <div class="right-side">
-            <div class="right-three-point-cover"></div>
-            <div class="right-three-point-line"></div>
-            <div class="right-free-throw-top"></div>
-            <div class="right-free-throw-bottom"></div>
-            <div class="right-free-throw-line"></div>
-          </div>
-        </div>
-      </div>
-      <div style="position: absolute; bottom: -20px; left: 75px; transform: translateX(-50%);">Showing Score</div>
     </div>
     <div v-if="isFetchingData" class="loading">Loading...</div>
     <ul v-else class="game-list">
@@ -237,8 +242,8 @@
 
   const isGameHot= ((game) => {
     if(!game.time) return false
-    // const targets = ['SAS', 'LAL']
-      const targets = ['SAS']
+    const targets = ['SAS', 'LAL']
+    // const targets = ['SAS']
 
     if (
       targets.includes(game.home_team.abbreviation) ||
@@ -353,6 +358,10 @@
 
     return dates;
   })
+
+  const reloadPage = () => {
+        window.location.reload()
+    }
 </script>
 
 <style>
