@@ -44,7 +44,7 @@
 
     </div>
     <div v-if="dateRange" class="dataRange">
-      <span style=""><i class="fas fa-sync" @click="reloadPage()"></i></span>
+      <span style=""><i class="fas fa-sync" @click="fetchGames()"></i></span>
       <template v-for="(date, index) in dateRange" :key="date">
         <span v-if="index !== 0" @click="searchDate = date"  :style="{ color: searchDate === date ? 'crimson' : '#194045' }">{{ shortenDate(date) }}</span>
       </template>
@@ -370,10 +370,6 @@
 
     return dates;
   })
-
-  const reloadPage = () => {
-        window.location.reload()
-    }
 </script>
 
 <style>
